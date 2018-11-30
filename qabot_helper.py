@@ -48,6 +48,7 @@ class ForTestProcessor(DataProcessor):
 
 class QabotProcessor(DataProcessor):
     DATA_PKL_FILE = 'dual_train_dev_samples.pkl'
+    SAMPLE_NUM = 100
 
     def __init__(self):
         input_pkl_fp = INPUT_PKL_FP
@@ -94,13 +95,13 @@ class QabotProcessor(DataProcessor):
     def get_train_examples(self, data_dir):
         input_pkl_fp = os.path.join(data_dir, self.DATA_PKL_FILE)
         self.train, self.dev, self.data_info = pk.load(open(input_pkl_fp, 'rb'))
-        return self._get_examples(self.train, limit=1000)
+        return self._get_examples(self.train, limit=self.SAMPLE_NUM)
 
     def get_dev_examples(self, data_dir):
-        return self._get_examples(self.dev)
+        return self._get_examples(self.dev, limit=self.SAMPLE_NUM)
 
     def get_test_examples(self, data_dir):
-        return self._get_examples(self.dev)
+        return self._get_examples(self.dev, limit=self.SAMPLE_NUM)
 
     def get_labels(self):
         """See base class."""

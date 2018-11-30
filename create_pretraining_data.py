@@ -222,6 +222,7 @@ def create_instances_from_document(
     masked_lm_prob, max_predictions_per_seq, vocab_words, rng):
   """Creates `TrainingInstance`s for a single document."""
   document = all_documents[document_index]
+  import pdb; pdb.set_trace()
 
   # Account for [CLS], [SEP], [SEP]
   max_num_tokens = max_seq_length - 3

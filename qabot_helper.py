@@ -10,7 +10,7 @@ import random
 import tokenization
 from classifier_helper import DataProcessor, InputExample
 
-INPUT_PKL_FP = '/Users/king/Documents/Ein/Codes/dpf/data/projects/botlet_insurance/cv_0/dual_train_dev_samples.pkl'
+# INPUT_PKL_FP = '/Users/king/Documents/Ein/Codes/dpf/data/projects/botlet_insurance/cv_0/dual_train_dev_samples.pkl'
 
 
 class ForTestProcessor(DataProcessor):
@@ -51,8 +51,9 @@ class QabotProcessor(DataProcessor):
     SAMPLE_NUM = 100
 
     def __init__(self):
-        input_pkl_fp = INPUT_PKL_FP
-        self.train, self.dev, self.data_info = pk.load(open(input_pkl_fp, 'rb'))
+        # input_pkl_fp = INPUT_PKL_FP
+        # self.train, self.dev, self.data_info = pk.load(open(input_pkl_fp, 'rb'))
+        self.train, self.dev, self.data_info = None, None, None
 
     def _get_ori_sample(self, data, limit=-1):
         pos_data = data['positives']
@@ -92,15 +93,24 @@ class QabotProcessor(DataProcessor):
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
 
-    def get_train_examples(self, data_dir):
+    def _load_data(self, data_dir):
         input_pkl_fp = os.path.join(data_dir, self.DATA_PKL_FILE)
         self.train, self.dev, self.data_info = pk.load(open(input_pkl_fp, 'rb'))
+
+    def get_train_examples(self, data_dir):
+        if self.train is None:
+            self._load_data(data_dir)
         return self._get_examples(self.train, limit=self.SAMPLE_NUM)
 
     def get_dev_examples(self, data_dir):
+        if self.dev is None:
+            self._load_data(data_dir)
         return self._get_examples(self.dev, limit=self.SAMPLE_NUM)
 
     def get_test_examples(self, data_dir):
+        """暂时就把dev看成test数据"""
+        if self.dev is None:
+            self._load_data(data_dir)
         return self._get_examples(self.dev, limit=self.SAMPLE_NUM)
 
     def get_labels(self):

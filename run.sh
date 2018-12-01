@@ -3,6 +3,7 @@
 export BERT_BASE_DIR='/Users/king/Documents/Ein/语料/BERT/chinese_L-12_H-768_A-12'
 TEST_DATA_DIR='./data'
 DPF_DIR='/Users/king/Documents/Ein/Codes/dpf/data/projects/botlet_insurance/cv_0'
+export BERT_SAMPLE_NUM=100
 
 ## create pretraining data
 #python create_pretraining_data.py \

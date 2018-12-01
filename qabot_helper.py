@@ -48,12 +48,13 @@ class ForTestProcessor(DataProcessor):
 
 class QabotProcessor(DataProcessor):
     DATA_PKL_FILE = 'dual_train_dev_samples.pkl'
-    SAMPLE_NUM = 100
+    SAMPLE_NUM = int(os.getenv('BERT_SAMPLE_NUM', '100'))
 
     def __init__(self):
         # input_pkl_fp = INPUT_PKL_FP
         # self.train, self.dev, self.data_info = pk.load(open(input_pkl_fp, 'rb'))
         self.train, self.dev, self.data_info = None, None, None
+        print('SAMPLE_NUM: %d' % self.SAMPLE_NUM)
 
     def _get_ori_sample(self, data, limit=-1):
         pos_data = data['positives']

@@ -48,13 +48,15 @@ class ForTestProcessor(DataProcessor):
 
 class QabotProcessor(DataProcessor):
     DATA_PKL_FILE = 'dual_train_dev_samples.pkl'
-    SAMPLE_NUM = int(os.getenv('BERT_SAMPLE_NUM', '100'))
+    TRAIN_SAMPLE_NUM = int(os.getenv('BERT_TRAIN_SAMPLE_NUM', '100'))
+    DEV_SAMPLE_NUM = int(os.getenv('BERT_DEV_SAMPLE_NUM', '100'))
 
     def __init__(self):
         # input_pkl_fp = INPUT_PKL_FP
         # self.train, self.dev, self.data_info = pk.load(open(input_pkl_fp, 'rb'))
         self.train, self.dev, self.data_info = None, None, None
-        print('SAMPLE_NUM: %d' % self.SAMPLE_NUM)
+        print('TRAIN_SAMPLE_NUM: %d' % self.TRAIN_SAMPLE_NUM)
+        print('DEV_SAMPLE_NUM: %d' % self.DEV_SAMPLE_NUM)
 
     def _get_ori_sample(self, data, limit=-1):
         pos_data = data['positives']
@@ -68,10 +70,11 @@ class QabotProcessor(DataProcessor):
             part_neg_list = sample_from_neg_dict(part_neg_dict, -1)
             pos_samples.extend(part_pos_list)
             neg_samples.extend(part_neg_list)
-        random.shuffle(pos_samples)
-        random.shuffle(neg_samples)
         if limit > 0:
-            pos_num = max(limit // 6, 1)
+            random.shuffle(pos_samples)
+            random.shuffle(neg_samples)
+
+            pos_num = max(limit // 2, 1)
             neg_num = limit - pos_num
             pos_samples = pos_samples[:pos_num]
             neg_samples = neg_samples[:neg_num]
@@ -101,18 +104,18 @@ class QabotProcessor(DataProcessor):
     def get_train_examples(self, data_dir):
         if self.train is None:
             self._load_data(data_dir)
-        return self._get_examples(self.train, limit=self.SAMPLE_NUM)
+        return self._get_examples(self.train, limit=self.TRAIN_SAMPLE_NUM)
 
     def get_dev_examples(self, data_dir):
         if self.dev is None:
             self._load_data(data_dir)
-        return self._get_examples(self.dev, limit=self.SAMPLE_NUM)
+        return self._get_examples(self.dev, limit=self.DEV_SAMPLE_NUM)
 
     def get_test_examples(self, data_dir):
         """暂时就把dev看成test数据"""
         if self.dev is None:
             self._load_data(data_dir)
-        return self._get_examples(self.dev, limit=self.SAMPLE_NUM)
+        return self._get_examples(self.dev, limit=self.DEV_SAMPLE_NUM)
 
     def get_labels(self):
         """See base class."""
